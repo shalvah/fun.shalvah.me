@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Game Night Adventure! 🎉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: scale(1.02);
+        }
+
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            animation: bounce 2s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .emoji {
+            font-size: 3em;
+            margin: 20px 0;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .riddle-container {
+            margin: 30px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .riddle-text {
+            color: #4a4a4a;
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            white-space: pre-line;
+            font-style: italic;
+        }
+
+        .blanks-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .blank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 120px;
+            height: 60px;
+            background: white;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            transition: all 0.3s ease;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .blank.filled {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-style: solid;
+            animation: fillIn 0.6s ease;
+        }
+
+        @keyframes fillIn {
+            0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            max-width: 300px;
+            padding: 15px 20px;
+            font-size: 1.2em;
+            border: 3px solid #667eea;
+            border-radius: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+            transform: scale(1.05);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+            color: #2d3436;
+            animation: celebrate 0.6s ease;
+        }
+
+        @keyframes celebrate {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 2px solid #ef5350;
+        }
+
+        .final-message {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .final-message h2 {
+            color: #ff6b6b;
+            font-size: 2em;
+            margin-bottom: 20px;
+            animation: bounce 2s ease infinite;
+        }
+
+        .final-message .clue {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            font-style: italic;
+            color: #4a4a4a;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <h1>🎮 Game Night Adventure! 🎉</h1>
+        <div class="emoji">🎯</div>
+        
+        <div id="riddle-section">
+            <div class="riddle-container" id="riddle-container"></div>
+            
+            <div class="blanks-container" id="blanks-container">
+                <div class="blank" id="blank1">____</div>
+                <div class="blank" id="blank2">____</div>
+                <div class="blank" id="blank3">____</div>
+            </div>
+            
+            <div class="input-group">
+                <input type="text" id="answer-input" placeholder="Your answer..." autocomplete="off">
+            </div>
+            
+            <button onclick="checkAnswer()">Submit! ✨</button>
+            
+            <div id="message" class="message"></div>
+        </div>
+        
+        <div id="final-section" style="display: none;">
+            <div class="final-message">
+                <h2>🎉 Now you're ready to play! 🎉</h2>
+                <p style="font-size: 1.2em; color: #4a4a4a; margin: 20px 0;">
+                    Here's a riddle to lead you to your first clue:
+                </p>
+                <div class="clue">
+                    "Go where the metal and metal meet, where doors are closed to keep out heat. 
+                    They stick and hold with all their might, 
+                    Follow the magnets, colourful and bright."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create twinkling stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+        createStars();
+
+        // Riddles and answers
+        const riddles = [
+            {
+                text: `To start the adventure must all three teams together venture. 
+Solve this riddle true to unlock the first clue:
+Roses are red, violets are too.
+Oops, I said something wrong, but that's up to you. It's ____.`,
+                answer: 'blue',
+                blankId: 'blank1'
+            },
+            {
+                text: `To start the adventure must all three teams together venture. 
+This riddle must be read to find what is ahead:
+I'm the hue of a stop sign, filling you with dread,
+I'm the shade of a wound that has bled. I'm ____.`,
+                answer: 'red',
+                blankId: 'blank2'
+            },
+            {
+                text: `To start the adventure must all three teams together venture. 
+This riddle you have seen; from it you shall glean:
+I'm the light that tells you when the road is all clean.
+I'm the shade of an emerald, fit for a queen. I'm ____.`,
+                answer: 'green',
+                blankId: 'blank3'
+            }
+        ];
+
+        let currentRiddle = 0;
+
+        // Display the first riddle
+        function displayCurrentRiddle() {
+            const riddleContainer = document.getElementById('riddle-container');
+            const riddleText = document.createElement('div');
+            riddleText.className = 'riddle-text';
+            riddleText.textContent = riddles[currentRiddle].text;
+            riddleContainer.innerHTML = '';
+            riddleContainer.appendChild(riddleText);
+        }
+
+        // Initialize
+        displayCurrentRiddle();
+
+        function checkAnswer() {
+            const input = document.getElementById('answer-input');
+            const message = document.getElementById('message');
+            const answer = input.value.trim().toLowerCase();
+            const correctAnswer = riddles[currentRiddle].answer;
+
+            if (answer === correctAnswer) {
+                // Fill in the blank
+                const blank = document.getElementById(riddles[currentRiddle].blankId);
+                blank.textContent = correctAnswer.toUpperCase();
+                blank.classList.add('filled');
+                
+                // Show success message
+                message.textContent = '✨ Correct! Well done! ✨';
+                message.className = 'message success show';
+                
+                // Confetti effect
+                confetti();
+                
+                // Clear input
+                input.value = '';
+                
+                // Move to next riddle or show final message
+                currentRiddle++;
+                
+                setTimeout(() => {
+                    message.className = 'message';
+                    
+                    if (currentRiddle < riddles.length) {
+                        displayCurrentRiddle();
+                    } else {
+                        // All riddles solved
+                        document.getElementById('riddle-section').style.display = 'none';
+                        document.getElementById('final-section').style.display = 'block';
+                        confetti();
+                        confetti();
+                    }
+                }, 1500);
+            } else {
+                message.textContent = '❌ Not quite! Try again!';
+                message.className = 'message error show';
+                
+                setTimeout(() => {
+                    message.className = 'message';
+                }, 2000);
+            }
+        }
+
+        // Allow Enter key to submit
+        document.getElementById('answer-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
+
+        // Simple confetti effect
+        function confetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7b731', '#5f27cd', '#00d2d3'];
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '1000';
+                    document.body.appendChild(confetti);
+
+                    let pos = -10;
+                    let rotation = 0;
+                    const fall = setInterval(() => {
+                        if (pos > window.innerHeight) {
+                            clearInterval(fall);
+                            confetti.remove();
+                        } else {
+                            pos += 5;
+                            rotation += 10;
+                            confetti.style.top = pos + 'px';
+                            confetti.style.transform = `rotate(${rotation}deg)`;
+                        }
+                    }, 30);
+                }, i * 50);
+            }
+        }
+    </script>
+</body>
+</html>
