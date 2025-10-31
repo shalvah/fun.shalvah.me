@@ -293,11 +293,10 @@
             const team = teams[currentTeam];
 
             if (answer === team.answer) {
-                // Remove input field and button
-                const inputGroup = document.querySelector('.input-group');
+                // Disable input field and button
+                input.disabled = true;
                 const button = document.querySelector('button');
-                if (inputGroup) inputGroup.remove();
-                if (button) button.remove();
+                if (button) button.disabled = true;
                 
                 message.textContent = team.congratsMessage;
                 message.className = 'message success show';
