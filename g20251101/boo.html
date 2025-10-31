@@ -209,20 +209,85 @@
         }
         createStars();
 
-        // Valid passcodes
-        const validPasscodes = ['what', 'writtendown', 'needed'];
+        // Team configurations
+        const teams = {
+            'what': {
+                name: 'Green Team',
+                clue: "You see me in your mailbox, and you pray, \"not bills, nope!\" A letter, money perhaps, but good news, you hope. I am an ________",
+                answer: 'envelope',
+                congratsMessage: "Congratulations, you've solved all your clues! You've found the Object. Wait for the other teams to find the Key and Location."
+            },
+            'needed': {
+                name: 'Blue Team',
+                clue: "The mailman comes, and fills me with docs. You're expecting a letter, so you watch me like hawks. I am the _______.",
+                answer: 'mailbox',
+                congratsMessage: "Congratulations, you've solved all your clues! You've found the Location. Wait for the other teams to find the Key and Object."
+            },
+            'writtendown': {
+                name: 'Red Team',
+                clue: "",
+                answer: 'key',
+                congratsMessage: "Congratulations, you've solved all your clues! Get the Key from the Keymaster. Wait for the other teams to find the Location and Object."
+            }
+        };
+
+        let currentTeam = null;
+        let stage = 'passcode'; // 'passcode' or 'clue'
 
         function checkPasscode() {
             const input = document.getElementById('passcode');
             const message = document.getElementById('message');
             const passcode = input.value.trim().toLowerCase();
 
-            if (validPasscodes.includes(passcode)) {
-                message.textContent = '🎊 Congrats! 🎊';
+            if (teams[passcode]) {
+                currentTeam = passcode;
+                stage = 'clue';
+                
+                // Update UI for clue stage
+                message.textContent = "Correct! You're almost there!";
+                message.className = 'message success show';
+                
+                setTimeout(() => {
+                    showClueStage();
+                }, 1500);
+            } else {
+                message.textContent = '❌ Oops! Try again!';
+                message.className = 'message error show';
+            }
+        }
+
+        function showClueStage() {
+            const container = document.querySelector('.container');
+            const team = teams[currentTeam];
+            
+            container.innerHTML = `
+                <h1>🎮 Final Clue! 🎉</h1>
+                <div class="emoji">🔍</div>
+                <p style="font-weight: bold; color: #667eea;">${team.name}</p>
+                ${team.clue ? `<p style="font-style: italic; margin: 20px 0;">${team.clue}</p>` : '<p style="font-style: italic; margin: 20px 0;">Your final clue is simple: what unlocks things?</p>'}
+                
+                <div class="input-group">
+                    <input type="text" id="answer" placeholder="Type your answer here..." autocomplete="off">
+                </div>
+                
+                <button onclick="checkAnswer()">Submit Answer! ✨</button>
+                
+                <div id="message" class="message"></div>
+            `;
+        }
+
+        function checkAnswer() {
+            const input = document.getElementById('answer');
+            const message = document.getElementById('message');
+            const answer = input.value.trim().toLowerCase();
+            const team = teams[currentTeam];
+
+            if (answer === team.answer) {
+                message.textContent = team.congratsMessage;
                 message.className = 'message success show';
                 confetti();
             } else {
-                message.textContent = '❌ Oops! Try again!';
+                message.textContent = '❌ Not quite! Try again!';
                 message.className = 'message error show';
             }
         }
