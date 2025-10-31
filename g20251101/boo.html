@@ -213,19 +213,22 @@
         const teams = {
             'what': {
                 name: 'Green Team',
+                color: 'green',
                 clue: "You see me in your mailbox, and you pray, \"not bills, nope!\" A letter, money perhaps, but good news, you hope. I am an ________",
                 answer: 'envelope',
                 congratsMessage: "Congratulations, you've solved all your clues! You've found the Object. Wait for the other teams to find the Key and Location."
             },
             'needed': {
                 name: 'Blue Team',
+                color: 'blue',
                 clue: "The mailman comes, and fills me with docs. You're expecting a letter, so you watch me like hawks. I am the _______.",
                 answer: 'mailbox',
                 congratsMessage: "Congratulations, you've solved all your clues! You've found the Location. Wait for the other teams to find the Key and Object."
             },
             'writtendown': {
                 name: 'Red Team',
-                clue: "",
+                color: 'red',
+                clue: "I'm a pretty small thing, and my letters are three. When you need to open something, I'm the one that you see. I'm a ___.",
                 answer: 'key',
                 congratsMessage: "Congratulations, you've solved all your clues! Get the Key from the Keymaster. Wait for the other teams to find the Location and Object."
             }
@@ -263,7 +266,7 @@
             container.innerHTML = `
                 <h1>🎮 Final Clue! 🎉</h1>
                 <div class="emoji">🔍</div>
-                <p style="font-weight: bold; color: #667eea;">${team.name}</p>
+                <p style="font-weight: bold; color: ${team.color};">${team.name}</p>
                 ${team.clue ? `<p style="font-style: italic; margin: 20px 0;">${team.clue}</p>` : '<p style="font-style: italic; margin: 20px 0;">Your final clue is simple: what unlocks things?</p>'}
                 
                 <div class="input-group">
@@ -274,6 +277,13 @@
                 
                 <div id="message" class="message"></div>
             `;
+            
+            // Add Enter key listener for answer input
+            document.getElementById('answer').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
         }
 
         function checkAnswer() {
@@ -283,6 +293,11 @@
             const team = teams[currentTeam];
 
             if (answer === team.answer) {
+                // Disable input field and button
+                input.disabled = true;
+                const button = document.querySelector('button');
+                if (button) button.disabled = true;
+                
                 message.textContent = team.congratsMessage;
                 message.className = 'message success show';
                 confetti();
