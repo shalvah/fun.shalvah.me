@@ -101,9 +101,6 @@
         }
 
         .blank {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
             width: 120px;
             height: 60px;
             background: white;
@@ -114,6 +111,23 @@
             color: #667eea;
             transition: all 0.3s ease;
             animation: pulse 2s ease infinite;
+            text-align: center;
+            text-transform: uppercase;
+            outline: none;
+        }
+        
+        .blank:disabled {
+            background: #f0f0f0;
+            border-color: #ccc;
+            color: #999;
+            cursor: not-allowed;
+            animation: none;
+        }
+        
+        .blank:focus:not(:disabled) {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.4);
+            transform: scale(1.05);
         }
 
         @keyframes pulse {
@@ -274,16 +288,10 @@
             <div class="riddle-container" id="riddle-container"></div>
             
             <div class="blanks-container" id="blanks-container">
-                <div class="blank" id="blank1">____</div>
-                <div class="blank" id="blank2">____</div>
-                <div class="blank" id="blank3">____</div>
+                <input type="text" class="blank" id="blank1" placeholder="____" maxlength="10" autocomplete="off" disabled>
+                <input type="text" class="blank" id="blank2" placeholder="____" maxlength="10" autocomplete="off" disabled>
+                <input type="text" class="blank" id="blank3" placeholder="____" maxlength="10" autocomplete="off" disabled>
             </div>
-            
-            <div class="input-group">
-                <input type="text" id="answer-input" placeholder="Your answer..." autocomplete="off">
-            </div>
-            
-            <button onclick="checkAnswer()">Submit! ✨</button>
             
             <div id="message" class="message"></div>
         </div>
@@ -361,18 +369,38 @@ I'm the shade of an emerald, fit for a queen. I'm ____.`,
 
         // Initialize
         displayCurrentRiddle();
+        
+        // Enable the first blank
+        document.getElementById('blank1').disabled = false;
+        document.getElementById('blank1').focus();
 
-        function checkAnswer() {
-            const input = document.getElementById('answer-input');
+        // Add event listeners to each blank
+        function setupBlankListener(blankId, riddleIndex) {
+            const blank = document.getElementById(blankId);
+            blank.addEventListener('input', function(e) {
+                checkAnswer(e.target, riddleIndex);
+            });
+            blank.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer(e.target, riddleIndex);
+                }
+            });
+        }
+        
+        setupBlankListener('blank1', 0);
+        setupBlankListener('blank2', 1);
+        setupBlankListener('blank3', 2);
+
+        function checkAnswer(inputElement, riddleIndex) {
             const message = document.getElementById('message');
-            const answer = input.value.trim().toLowerCase();
-            const correctAnswer = riddles[currentRiddle].answer;
+            const answer = inputElement.value.trim().toLowerCase();
+            const correctAnswer = riddles[riddleIndex].answer;
 
             if (answer === correctAnswer) {
-                // Fill in the blank
-                const blank = document.getElementById(riddles[currentRiddle].blankId);
-                blank.textContent = correctAnswer.toUpperCase();
-                blank.classList.add('filled');
+                // Fill in the blank and disable it
+                inputElement.value = correctAnswer.toUpperCase();
+                inputElement.classList.add('filled');
+                inputElement.disabled = true;
                 
                 // Show success message
                 message.textContent = '✨ Correct! Well done! ✨';
@@ -380,9 +408,6 @@ I'm the shade of an emerald, fit for a queen. I'm ____.`,
                 
                 // Confetti effect
                 confetti();
-                
-                // Clear input
-                input.value = '';
                 
                 // Move to next riddle or show final message
                 currentRiddle++;
@@ -392,6 +417,12 @@ I'm the shade of an emerald, fit for a queen. I'm ____.`,
                     
                     if (currentRiddle < riddles.length) {
                         displayCurrentRiddle();
+                        // Enable the next blank
+                        const nextBlank = document.getElementById(riddles[currentRiddle].blankId);
+                        if (nextBlank) {
+                            nextBlank.disabled = false;
+                            nextBlank.focus();
+                        }
                     } else {
                         // All riddles solved
                         document.getElementById('riddle-section').style.display = 'none';
@@ -400,7 +431,8 @@ I'm the shade of an emerald, fit for a queen. I'm ____.`,
                         confetti();
                     }
                 }, 1500);
-            } else {
+            } else if (answer.length >= correctAnswer.length) {
+                // Only show error if they've typed enough characters
                 message.textContent = '❌ Not quite! Try again!';
                 message.className = 'message error show';
                 
@@ -409,13 +441,6 @@ I'm the shade of an emerald, fit for a queen. I'm ____.`,
                 }, 2000);
             }
         }
-
-        // Allow Enter key to submit
-        document.getElementById('answer-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkAnswer();
-            }
-        });
 
         // Simple confetti effect
         function confetti() {
